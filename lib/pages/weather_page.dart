@@ -13,6 +13,7 @@ class _WeatherPageState extends State<WeatherPage> {
   String cityName = '';
   String weatherDescription = '';
   double temprature = 0.0;
+  double humidity = 0.0;
   bool isLoading = false;
 
   @override
@@ -128,6 +129,38 @@ class _WeatherPageState extends State<WeatherPage> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                Text(
+                  "City : $cityName",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  "Weather : $weatherDescription",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  "temprature : ${temprature.toStringAsFixed(1)}",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  "Humidity : $humidity%",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
                   ),
                 ),
               ],
