@@ -1,6 +1,8 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+
+import 'package:geolocator/geolocator.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -17,9 +19,16 @@ class _WeatherPageState extends State<WeatherPage> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    _determinePosition();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
 
@@ -70,7 +79,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 const SizedBox(height: 20.0),
                 TextField(
                   onChanged: (value) {
-                    log("value >>> $value");
+                    developer.log("value >>> $value");
                   },
 
                   style: TextStyle(color: Colors.white, fontSize: 18),
@@ -117,7 +126,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           ),
                         ),
                         onPressed: () {
-                          log("Search button pressed");
+                          developer.log("Search button pressed");
                         },
                         child: const Text(
                           "Search City Weather",
@@ -131,6 +140,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     ),
                   ),
                 ),
+
                 Text(
                   "City : $cityName",
                   style: TextStyle(
@@ -170,4 +180,50 @@ class _WeatherPageState extends State<WeatherPage> {
       ),
     );
   }
+}
+
+/// Determine the current position of the device.
+///
+/// When the location services are not enabled or permissions
+/// are denied the `Future` will return an error.
+Future<Position> _determinePosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled don't continue
+    // accessing the position and request users of the
+    // App to enable the location services.
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately.
+    dynamic permissiom = Future.error(
+      'Разрешения на определение местоположения навсегда запрещены, мы не можем запросить разрешения.',
+    );
+    developer.log("Разрешение >>> $permissiom");
+    return permissiom;
+  }
+
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  final Position data = await Geolocator.getCurrentPosition();
+  developer.log("data >>> $data");
+  return data;
 }
