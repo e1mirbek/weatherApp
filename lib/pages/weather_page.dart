@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:geolocator/geolocator.dart';
 
+import 'package:http/http.dart' as http;
+
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
 
@@ -17,6 +19,17 @@ class _WeatherPageState extends State<WeatherPage> {
   double temprature = 0.0;
   double humidity = 0.0;
   bool isLoading = false;
+
+  String apiKey = '8ebb768d9dc7ddefcad9ddb7b0d2409a';
+
+  Future<void> fetchWeatherData(Position position) async {
+    final String requestUrl =
+        'https://api.openweathermap.org/data/3.0/onecall?lat=${position.latitude}&lon=${position.longitude}&exclude={part}&appid=${apiKey}';
+
+    final Uri url = Uri.parse(requestUrl);
+
+    final response = await http.get(url);
+  }
 
   @override
   void initState() {
